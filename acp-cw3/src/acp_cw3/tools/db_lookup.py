@@ -6,7 +6,7 @@ CONNECTION = {"host": "localhost",
                     "user": "admin",
                     "password": "admin"}
 TABLE_NAME = "employees"
-ALLOWED_COLUMNS = ["employer_id", "name", "department", "role", "email"]
+ALLOWED_COLUMNS = ["employer_id", "name", "department", "role", "email", "city"]
 
 def db_lookup(column: str, value: str) -> dict:
     if column not in ALLOWED_COLUMNS:
@@ -33,7 +33,7 @@ SCHEMA = {
     "type": "function",
     "function": {
         "name": "db_lookup",
-        "description": "Look up employees in the database by filtering on a column. Results can be filtered by employees' id, name, department, role, or email.",
+        "description": "Look up employees in the database by filtering on a column. Results can be filtered by employees' id, name, department, role, email, and the city they are in.",
         "parameters": {
             "type": "object",
             "properties": {

@@ -30,6 +30,7 @@ TOPIC_TOOL_RESULTS = "tool-results"
 LLM_BASE_URL = "http://localhost:1234/v1"
 LLM_MODEL = "google/gemma-4-e4b"
 LLM_API_KEY = "not-needed"
+LLM_TOOL_URL = f"http://{API_HOST}:{API_PORT}{API_ROOT}/tool"
 
 # Cache TTL
 TOOL_TTL = {
