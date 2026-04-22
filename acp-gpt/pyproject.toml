@@ -1,7 +1,7 @@
 [project]
-name = "acp-cw3"
+name = "acp-gpt"
 version = "0.1.0"
-description = "ACP Coursework 3"
+description = "ACP CW3 GPT services"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi",
@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-acp-cw3 = "acp_cw3.main:start"
+acp-gpt = "acp_gpt.main:start"
 
 [build-system]
 requires = ["setuptools>=68.0"]

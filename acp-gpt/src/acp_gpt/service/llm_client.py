@@ -1,5 +1,5 @@
 from openai import OpenAI
-from acp_cw3.config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL
+from acp_gpt.config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL
 
 client = OpenAI(base_url=LLM_BASE_URL, api_key=LLM_API_KEY)
 

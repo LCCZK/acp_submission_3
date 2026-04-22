@@ -1,16 +1,13 @@
-# src/acp_cw3/services/mcp_client.py
 import asyncio
 import json
 import logging
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
-from acp_cw3.config import MCP_SERVER_URL
+from acp_gpt.config import MCP_SERVER_URL
 
 logger = logging.getLogger("uvicorn")
 
-
 async def _discover_tools() -> list[dict]:
-    """Connect to MCP server and convert tools to OpenAI format."""
     async with streamable_http_client(MCP_SERVER_URL) as (read, write, _):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -32,13 +29,15 @@ async def _discover_tools() -> list[dict]:
 
 
 async def _call_mcp_tool(name: str, args: dict) -> dict:
-    """Execute a tool via the MCP server."""
     async with streamable_http_client(MCP_SERVER_URL) as (read, write, _):
         async with ClientSession(read, write) as session:
             await session.initialize()
             result = await session.call_tool(name, args)
 
-            # Parse the result content
+            if result.isError:
+                error_text = result.content[0].text if result.content else "Unknown MCP error"
+                raise Exception(f"MCP tool error: {error_text}")
+
             for content in result.content:
                 if hasattr(content, "text"):
                     try:

@@ -1,30 +1,32 @@
 import json
 import logging
-from acp_cw3.services.llm.client import call_llm
-from acp_cw3.services.mcp_client import discover_tools, call_mcp_tool
+from acp_gpt.service.llm_client import call_llm
+from acp_gpt.service.mcp_client import discover_tools, call_mcp_tool
+
 
 logger = logging.getLogger("uvicorn")
 
-def run_simple_chat(prompt: str) -> dict:
+
+def run_tool_chat(prompt: str) -> dict:
+    steps = []
+    messages: list = [{"role": "user", "content": prompt}]
+
     tools = discover_tools()
     logger.info(f"MCP: Discovered {len(tools)} tools")
-
-    messages: list = [{"role": "user", "content": prompt}]
-    steps = []
-
+    
     while True:
         response = call_llm(messages, tools)
-        r_msg = response.choices[0].message
+        msg = response.choices[0].message
 
-        if not r_msg.tool_calls:
+        if not msg.tool_calls:
             return {
-                "response": r_msg.content,
+                "response": msg.content,
                 "steps": steps,
             }
 
-        messages.append(r_msg)
+        messages.append(msg)
 
-        for call in r_msg.tool_calls:
+        for call in msg.tool_calls:
             func_name = call.function.name # type: ignore
             args = json.loads(call.function.arguments) # type: ignore
             logger.info(f"TOOL CALL: {func_name}({args})")
