@@ -3,7 +3,7 @@ import json
 import logging
 from acp_cw3.config import BASE_RESUME_URL
 from acp_cw3.services.llm.client import call_llm
-from acp_cw3.services.llm.tool_registry import TOOLS, execute_tool
+from acp_cw3.services.mcp_client import discover_tools, call_mcp_tool
 from acp_cw3.services.cache_tools import get_cached, set_cached
 from acp_cw3.services.kafka_events import new_chain_id, log_event, get_chain_events
 
@@ -12,6 +12,10 @@ logger = logging.getLogger("uvicorn")
 
 def run_resilient_chat(prompt: str) -> dict:
     chain_id = new_chain_id()
+
+    tools = discover_tools()
+    logger.info(f"MCP: Discovered {len(tools)} tools")
+
     messages: list = [{"role": "user", "content": prompt}]
     steps = []
     has_failure = False
@@ -19,7 +23,7 @@ def run_resilient_chat(prompt: str) -> dict:
     log_event(chain_id, "chain_started", {"prompt": prompt})
 
     while True:
-        response = call_llm(messages, TOOLS)
+        response = call_llm(messages, tools)
         r_msg = response.choices[0].message
 
         if not r_msg.tool_calls:
@@ -55,7 +59,7 @@ def run_resilient_chat(prompt: str) -> dict:
                 })
             else:
                 try:
-                    result = execute_tool(func_name, args)
+                    result = call_mcp_tool(func_name, args)
                     set_cached(func_name, args, result)
                     status = "success"
                     error = None
@@ -88,6 +92,8 @@ def run_resilient_chat(prompt: str) -> dict:
 
 def run_resume(chain_id: str) -> dict:
     events = get_chain_events(chain_id)
+    tools = discover_tools()
+    logger.info(f"MCP: Discovered {len(tools)} tools")
 
     if not events:
         return {"error": f"No chain found with id {chain_id}"}
@@ -111,7 +117,7 @@ def run_resume(chain_id: str) -> dict:
     log_event(chain_id, "chain_resumed", {"prompt": prompt})
 
     while True:
-        response = call_llm(messages, TOOLS)
+        response = call_llm(messages, tools)
         r_msg = response.choices[0].message
 
         if not r_msg.tool_calls:
@@ -152,7 +158,7 @@ def run_resume(chain_id: str) -> dict:
                 error = None
             else:
                 try:
-                    result = execute_tool(func_name, args)
+                    result = call_mcp_tool(func_name, args)
                     set_cached(func_name, args, result)
                     status = "success"
                     error = None

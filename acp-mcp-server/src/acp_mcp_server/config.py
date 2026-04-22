@@ -1,3 +1,7 @@
+# MCP
+MCP_HOST="localhost"
+MCP_PORT=8000
+
 # Postgre
 POSTGRES_HOST = "localhost"
 POSTGRES_PORT = 5432
@@ -6,5 +10,9 @@ POSTGRES_USER = "admin"
 POSTGRES_PASSWORD = "admin"
 TABLE_NAME = "employees"
 ALLOWED_COLUMNS = ["employer_id", "name", "department", "role", "email", "city"]
+DB_LOOKUP_DESC = f"Look up employees data in the database by filtering on a column. Allowed columns are: {ALLOWED_COLUMNS}."
 
 # Weather
+GET_WEATHER_DESC = "Get current weather for a city"
+
+

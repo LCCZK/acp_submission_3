@@ -1,16 +1,19 @@
 import json
 import logging
 from acp_cw3.services.llm.client import call_llm
-from acp_cw3.services.llm.tool_registry import TOOLS, execute_tool
+from acp_cw3.services.mcp_client import discover_tools, call_mcp_tool
 
 logger = logging.getLogger("uvicorn")
 
 def run_simple_chat(prompt: str) -> dict:
+    tools = discover_tools()
+    logger.info(f"MCP: Discovered {len(tools)} tools")
+
     messages: list = [{"role": "user", "content": prompt}]
     steps = []
 
     while True:
-        response = call_llm(messages, TOOLS)
+        response = call_llm(messages, tools)
         r_msg = response.choices[0].message
 
         if not r_msg.tool_calls:
@@ -27,7 +30,7 @@ def run_simple_chat(prompt: str) -> dict:
             logger.info(f"TOOL CALL: {func_name}({args})")
 
             try:
-                result = execute_tool(func_name, args)
+                result = call_mcp_tool(func_name, args)
                 status = "success"
                 error = None
                 logger.info(f"TOOL RESULT: {result}")

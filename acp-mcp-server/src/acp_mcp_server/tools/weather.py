@@ -1,8 +1,6 @@
 import requests
 
 def get_weather(city: str) -> dict:
-    """Get current weather for a city"""
-
     response = requests.get(
         f"https://wttr.in/{city}?format=j1",
         timeout=5

@@ -2,17 +2,13 @@ from acp_mcp_server.config import *
 import psycopg2
 
 CONNECTION = {"host": POSTGRES_HOST,
-                    "port": POSTGRES_PORT,
-                    "dbname": POSTGRES_HOST,
-                    "user": POSTGRES_USER,
-                    "password": POSTGRES_PASSWORD}
+                "port": POSTGRES_PORT,
+                "dbname": POSTGRES_DB,
+                "user": POSTGRES_USER,
+                "password": POSTGRES_PASSWORD}
 
 
 def db_lookup(column: str, value: str) -> dict:
-    f'''
-    Look up employees data in the database by filtering on a column. 
-    Allowed columns are: {ALLOWED_COLUMNS}.
-    '''
     if column not in ALLOWED_COLUMNS:
         return {"error": f"Invalid column '{column}'. Allowed: {ALLOWED_COLUMNS}"}
 

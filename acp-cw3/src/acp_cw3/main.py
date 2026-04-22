@@ -4,8 +4,6 @@ from acp_cw3.config import API_HOST, API_PORT, API_ROOT, UUID
 from acp_cw3.services.llm.simple_chat import run_simple_chat
 from acp_cw3.services.llm.cached_chat import run_cached_chat
 from acp_cw3.services.llm.resilient_chat import run_resilient_chat, run_resume
-from acp_cw3.tools.db_lookup import db_lookup
-from acp_cw3.tools.weather import get_weather
 from pydantic import BaseModel
 import uvicorn
 
@@ -27,13 +25,13 @@ class WeatherRequest(BaseModel):
 def uuid():
     return {UUID}
 
-@app.post("/tool/db_lookup")
-def tool_db_lookup(request: DbLookupRequest):
-    return db_lookup(request.column, request.value)
+# @app.post("/tool/db_lookup")
+# def tool_db_lookup(request: DbLookupRequest):
+#     return db_lookup(request.column, request.value)
 
-@app.post("/tool/get_weather")
-def tool_get_weather(request: WeatherRequest):
-    return get_weather(request.city)
+# @app.post("/tool/get_weather")
+# def tool_get_weather(request: WeatherRequest):
+#     return get_weather(request.city)
 
 @app.post("/simple/chat")
 def simple_chat(request: ChatRequest): 

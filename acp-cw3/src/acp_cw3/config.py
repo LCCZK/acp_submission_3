@@ -4,7 +4,8 @@ API_PORT = 8080
 API_ROOT = ""
 UUID = "s2276294"
 
-
+#MCP
+MCP_SERVER_URL = "http://localhost:8000/mcp"
 
 # Redis
 REDIS_HOST = "localhost"

@@ -7,10 +7,10 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "openai",
-    "psycopg2-binary",
     "redis",
     "kafka-python-ng",
     "requests",
+    "mcp[cli]",
 ]
 
 [project.scripts]
