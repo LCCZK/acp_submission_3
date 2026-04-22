@@ -12,7 +12,7 @@ REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 SESSION_TTL = 60
 TOOL_RETURN_TTL = {
-    "db_lookup": 10,
+    "db_lookup": 100,
     "get_weather": 10,
 }
 BASE_RESUME_URL = f"http://{API_HOST}:{API_PORT}{API_ROOT}/chat/cached/resume/"

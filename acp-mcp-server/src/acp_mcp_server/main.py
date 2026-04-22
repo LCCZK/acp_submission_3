@@ -6,7 +6,7 @@ from acp_mcp_server.config import MCP_HOST, MCP_PORT, DB_LOOKUP_DESC,GET_WEATHER
 
 mcp = FastMCP("ACP Tools",
                 host=MCP_HOST,
-                port=MCP_PORT,)
+                port=MCP_PORT)
 
 mcp.tool(description=DB_LOOKUP_DESC)(db_lookup)
 mcp.tool(description=GET_WEATHER_DESC)(get_weather)

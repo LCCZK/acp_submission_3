@@ -59,7 +59,7 @@ def cache_tool_call(tool_name: str, args: dict, result: dict) -> None:
 
         
 def check_tool_call_cashe(tool_name: str, args: dict) -> dict | None:
-    key = (tool_name, args)
+    key = cache_tool_call_key(tool_name, args)
     data = r.get(key)
 
     if data:
