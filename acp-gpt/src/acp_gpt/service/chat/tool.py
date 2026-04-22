@@ -27,12 +27,12 @@ def run_tool_chat(prompt: str) -> dict:
         messages.append(msg)
 
         for call in msg.tool_calls:
-            func_name = call.function.name # type: ignore
+            tool_name = call.function.name # type: ignore
             args = json.loads(call.function.arguments) # type: ignore
-            logger.info(f"TOOL CALL: {func_name}({args})")
+            logger.info(f"TOOL CALL: {tool_name}({args})")
 
             try:
-                result = call_mcp_tool(func_name, args)
+                result = call_mcp_tool(tool_name, args)
                 status = "success"
                 error = None
                 logger.info(f"TOOL RESULT: {result}")
@@ -40,10 +40,10 @@ def run_tool_chat(prompt: str) -> dict:
                 result = {"error": str(e)}
                 status = "failed"
                 error = str(e)
-                logger.warning(f"TOOL FAILED: {func_name} — {error}")
+                logger.warning(f"TOOL FAILED: {tool_name} — {error}")
 
             steps.append({
-                "tool": func_name,
+                "tool": tool_name,
                 "args": args,
                 "status": status,
                 "result": result,

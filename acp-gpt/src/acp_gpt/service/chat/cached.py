@@ -4,7 +4,7 @@ from openai.types.chat import ChatCompletion
 
 from acp_gpt.service.llm_client import call_llm
 from acp_gpt.service.mcp_client import discover_tools, call_mcp_tool
-from acp_gpt.service.redis_client import cache_tool_call, check_cashe_tool_call, cache_session, load_session, clear_session_cache
+from acp_gpt.service.redis_client import cache_tool_call, check_tool_call_cashe, cache_session, load_session, clear_session_cache
 from acp_gpt.config import BASE_RESUME_URL
 
 logger = logging.getLogger("uvicorn")
@@ -46,11 +46,11 @@ def run_cached_chat(prompt: str| None = None, session_id: str | None = None) -> 
         messages.append(msg.model_dump())
 
         for call in msg.tool_calls:
-            func_name = call.function.name # type: ignore
+            tool_name = call.function.name # type: ignore
             args = json.loads(call.function.arguments) # type: ignore
-            logger.info(f"TOOL CALL: {func_name}({args})")
+            logger.info(f"TOOL CALL: {tool_name}({args})")
 
-            cached = check_cashe_tool_call(func_name, args)
+            cached = check_tool_call_cashe(tool_name, args)
             if cached:
                 result = cached
                 status = "cached"
@@ -58,8 +58,8 @@ def run_cached_chat(prompt: str| None = None, session_id: str | None = None) -> 
             
             else:
                 try:
-                    result = call_mcp_tool(func_name, args)
-                    cache_tool_call(func_name, args, result)
+                    result = call_mcp_tool(tool_name, args)
+                    cache_tool_call(tool_name, args, result)
                     status = "success"
                     error = None
                     logger.info(f"TOOL RESULT: {result}")
@@ -68,10 +68,10 @@ def run_cached_chat(prompt: str| None = None, session_id: str | None = None) -> 
                     result = {"error": str(e)}
                     status = "failed"
                     error = str(e)
-                    logger.warning(f"TOOL FAILED: {func_name} — {error}")
+                    logger.warning(f"TOOL FAILED: {tool_name} — {error}")
                     sid = cache_session(response.model_dump(), messages)
 
-                    error_msg = f"Error: Tool {func_name} failed: {error}"
+                    error_msg = f"Error: Tool {tool_name} failed: {error}"
                     
                     return {
                         "response": f"Something went wrong, resume the current session at {BASE_RESUME_URL}{sid}\n{error_msg} ",
@@ -80,7 +80,7 @@ def run_cached_chat(prompt: str| None = None, session_id: str | None = None) -> 
                     
 
             steps.append({
-                "tool": func_name,
+                "tool": tool_name,
                 "args": args,
                 "status": status,
                 "result": result,
