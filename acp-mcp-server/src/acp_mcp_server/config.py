@@ -15,4 +15,12 @@ DB_LOOKUP_DESC = f"Look up employees data in the database by filtering on a colu
 # Weather
 GET_WEATHER_DESC = "Get current weather for a city"
 
+# Kafka
+KAFKA_BOOTSTRAP = "localhost:9092"
+KAFKA_DB_CHANGE_TOPIC = "acp.public.employees"
+KAFKA_CACHE_INVALIDATE_TOPIC = "acp.cache.invalidate"
+KAFKA_GROUP_ID = "mcp-cache-mapper"
 
+TABLE_TO_TOOLS = {
+    "acp.public.employees": ["db_lookup"],
+}

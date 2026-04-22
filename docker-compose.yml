@@ -10,6 +10,25 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    command: ["postgres", "-c", "wal_level=logical"]
+
+  debezium:
+    image: debezium/connect:2.5
+    container_name: acp-debezium
+    depends_on:
+      - kafka
+      - postgres
+    ports:
+      - "8083:8083"
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9093
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: debezium_configs
+      OFFSET_STORAGE_TOPIC: debezium_offsets
+      STATUS_STORAGE_TOPIC: debezium_statuses
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
 
   redis:
     image: redis:7
@@ -42,24 +61,41 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
 
-  ollama:
-    image: ollama/ollama
-    container_name: acp-ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
+  # ollama:
+  #   image: ollama/ollama
+  #   container_name: acp-ollama
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
 
-  ollama-init:
-    image: ollama/ollama
-    container_name: acp-ollama-init
+  # ollama-init:
+  #   image: ollama/ollama
+  #   container_name: acp-ollama-init
+  #   depends_on:
+  #     - ollama
+  #   restart: "no"
+  #   entrypoint: >
+  #     sh -c "sleep 5 && ollama pull qwen2.5:7b"
+  #   environment:
+  #     OLLAMA_HOST: ollama:11434
+
+  debezium-init:
+    image: curlimages/curl:latest
+    container_name: acp-debezium-init
     depends_on:
-      - ollama
+      - debezium
     restart: "no"
     entrypoint: >
-      sh -c "sleep 5 && ollama pull qwen2.5:7b"
-    environment:
-      OLLAMA_HOST: ollama:11434
+      sh -c "
+        echo 'Waiting for Debezium...';
+        until curl -s http://debezium:8083/connectors; do sleep 2; done;
+        sleep 5;
+        echo 'Registering connector...';
+        curl -s -X POST http://debezium:8083/connectors -H 'Content-Type: application/json' -d '{\"name\":\"postgres-connector\",\"config\":{\"connector.class\":\"io.debezium.connector.postgresql.PostgresConnector\",\"database.hostname\":\"postgres\",\"database.port\":\"5432\",\"database.user\":\"admin\",\"database.password\":\"admin\",\"database.dbname\":\"employer_db\",\"topic.prefix\":\"acp\",\"table.include.list\":\"public.employees\",\"plugin.name\":\"pgoutput\",\"slot.name\":\"debezium_slot\"}}';
+        echo '';
+        echo 'Done.';
+      "
 
 volumes:
   pgdata:
