@@ -4,13 +4,7 @@ API_PORT = 8080
 API_ROOT = ""
 UUID = "s2276294"
 
-# Postgre
-POSTGRES_HOST = "localhost"
-POSTGRES_PORT = 5432
-POSTGRES_DB = "employer_db"
-POSTGRES_USER = "admin"
-POSTGRES_PASSWORD = "admin"
-TABLE_NAME = "employees"
+
 
 # Redis
 REDIS_HOST = "localhost"
@@ -20,13 +14,15 @@ REDIS_PORT = 6379
 KAFKA_BOOTSTRAP = "localhost:9092"
 TOPIC_TOOL_REQUESTS = "tool-requests"
 TOPIC_TOOL_RESULTS = "tool-results"
+TOPIC_CHAIN_EVENTS = "chain-events"
+BASE_RESUME_URL = f"http://{API_HOST}:{API_PORT}{API_ROOT}/resilient/chat/resume/"
 
 # # Ollama
 # LLM_BASE_URL = "http://localhost:11434/v1"
 # LLM_MODEL = "qwen2.5:7b"
 # LLM_API_KEY = "not-needed"
 
-# Locan_LM_Studio
+# Local_LM_Studio
 LLM_BASE_URL = "http://localhost:1234/v1"
 LLM_MODEL = "google/gemma-4-e4b"
 LLM_API_KEY = "not-needed"
@@ -34,6 +30,6 @@ LLM_TOOL_URL = f"http://{API_HOST}:{API_PORT}{API_ROOT}/tool"
 
 # Cache TTL
 TOOL_TTL = {
-    "db_lookup": None,
-    "get_weather": 60,
+    "db_lookup": 10,
+    "get_weather": 10,
 }

@@ -1,0 +1,20 @@
+[project]
+name = "acp-mcp-server"
+version = "0.1.0"
+description = "MCP tool server for ACP CW3"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp[cli]",
+    "psycopg2-binary",
+    "requests",
+]
+
+[project.scripts]
+acp-mcp-server = "acp_mcp_server.main:main"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
