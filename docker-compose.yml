@@ -104,10 +104,12 @@ services:
       KAFKA_BOOTSTRAP: kafka:9093
       MCP_SERVER_URL: http://acp-mcp-server:8000/mcp
       LLM_BASE_URL: http://host.docker.internal:1234/v1
+      # LLM_BASE_URL:http://ollama:11434/v1
     depends_on:
       - redis
       - kafka
       - acp-mcp-server
+      - ollama
 
   debezium-init:
     image: curlimages/curl:latest
