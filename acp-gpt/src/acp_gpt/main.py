@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import uvicorn
@@ -24,7 +25,8 @@ app.include_router(chat_cached_router)
 # app.include_router(chat_resilient_router)
 
 def start():
-    uvicorn.run("acp_gpt.main:app", host=API_HOST, port=API_PORT, reload=True)
+    reload = os.environ.get("RELOAD", "false").lower() == "true"
+    uvicorn.run("acp_gpt.main:app", host=API_HOST, port=API_PORT, reload=reload)
 
 if __name__ == "__main__":
     start()

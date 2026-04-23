@@ -83,7 +83,12 @@ services:
   acp-mcp-server:
     build: ./acp-mcp-server
     container_name: acp-mcp-server
-    network_mode: host
+    ports:
+      - "8000:8000"
+    environment:
+      MCP_HOST: "0.0.0.0"
+      POSTGRES_HOST: postgres
+      KAFKA_BOOTSTRAP: kafka:9093
     depends_on:
       - postgres
       - kafka
@@ -91,7 +96,14 @@ services:
   acp-gpt:
     build: ./acp-gpt
     container_name: acp-gpt
-    network_mode: host
+    ports:
+      - "8080:8080"
+    environment:
+      API_HOST: "0.0.0.0"
+      REDIS_HOST: redis
+      KAFKA_BOOTSTRAP: kafka:9093
+      MCP_SERVER_URL: http://acp-mcp-server:8000/mcp
+      LLM_BASE_URL: http://host.docker.internal:1234/v1
     depends_on:
       - redis
       - kafka
