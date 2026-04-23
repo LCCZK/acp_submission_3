@@ -80,6 +80,23 @@ services:
   #   environment:
   #     OLLAMA_HOST: ollama:11434
 
+  acp-mcp-server:
+    build: ./acp-mcp-server
+    container_name: acp-mcp-server
+    network_mode: host
+    depends_on:
+      - postgres
+      - kafka
+
+  acp-gpt:
+    build: ./acp-gpt
+    container_name: acp-gpt
+    network_mode: host
+    depends_on:
+      - redis
+      - kafka
+      - acp-mcp-server
+
   debezium-init:
     image: curlimages/curl:latest
     container_name: acp-debezium-init
