@@ -17,7 +17,7 @@ TOOL_RETURN_TTL = {
     "db_lookup": 100,
     "get_weather": 10,
 }
-BASE_RESUME_URL = f"http://{API_HOST}:{API_PORT}{API_ROOT}/chat/cached/resume/"
+BASE_RESUME_URL = f"http://localhost:{API_PORT}{API_ROOT}/chat/cached/resume/"
 
 
 # Kafka
