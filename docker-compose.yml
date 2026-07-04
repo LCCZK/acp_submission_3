@@ -15,6 +15,7 @@ services:
   debezium:
     image: debezium/connect:2.5
     container_name: acp-debezium
+    restart: on-failure
     depends_on:
       - kafka
       - postgres
@@ -123,7 +124,7 @@ services:
         until curl -s http://debezium:8083/connectors; do sleep 2; done;
         sleep 5;
         echo 'Registering connector...';
-        curl -s -X POST http://debezium:8083/connectors -H 'Content-Type: application/json' -d '{\"name\":\"postgres-connector\",\"config\":{\"connector.class\":\"io.debezium.connector.postgresql.PostgresConnector\",\"database.hostname\":\"postgres\",\"database.port\":\"5432\",\"database.user\":\"admin\",\"database.password\":\"admin\",\"database.dbname\":\"employer_db\",\"topic.prefix\":\"acp\",\"table.include.list\":\"public.employees\",\"plugin.name\":\"pgoutput\",\"slot.name\":\"debezium_slot\"}}';
+        curl -sf -X POST http://debezium:8083/connectors -H 'Content-Type: application/json' -d '{\"name\":\"postgres-connector\",\"config\":{\"connector.class\":\"io.debezium.connector.postgresql.PostgresConnector\",\"database.hostname\":\"postgres\",\"database.port\":\"5432\",\"database.user\":\"admin\",\"database.password\":\"admin\",\"database.dbname\":\"employer_db\",\"topic.prefix\":\"acp\",\"table.include.list\":\"public.employees\",\"plugin.name\":\"pgoutput\",\"slot.name\":\"debezium_slot\",\"errors.retry.timeout\":\"-1\",\"errors.retry.delay.max.ms\":\"10000\"}}' && echo 'Connector registered' || echo 'Registration failed (may already exist)';
         echo '';
         echo 'Done.';
       "

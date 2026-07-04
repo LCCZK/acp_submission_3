@@ -12,6 +12,8 @@ POSTGRES_USER = "admin"
 POSTGRES_PASSWORD = "admin"
 TABLE_NAME = "employees"
 ALLOWED_COLUMNS = ["employer_id", "name", "department", "role", "email", "city"]
+
+# DB_Lookup
 DB_LOOKUP_DESC = f"Look up employees data in the database by filtering on a column. Allowed columns are: {ALLOWED_COLUMNS}."
 
 # Weather
@@ -22,5 +24,5 @@ KAFKA_BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9092")
 KAFKA_CACHE_INVALIDATE_TOPIC = "acp.cache.invalidate"
 KAFKA_GROUP_ID = "mcp-cache-mapper"
 TOPIC_TO_TOOLS = {
-    "acp.public.employees": ["db_lookup","hehe"],
+    "acp.public.employees": ["db_lookup"],
 }

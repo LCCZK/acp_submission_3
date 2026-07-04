@@ -12,10 +12,11 @@ MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL", "http://localhost:8000/mcp")
 # Redis
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
 REDIS_PORT = 6379
+
 SESSION_TTL = 60
 TOOL_RETURN_TTL = {
-    "db_lookup": 100,
-    "get_weather": 10,
+    "db_lookup": 1000,
+    "get_weather": 60,
 }
 BASE_RESUME_URL = f"http://localhost:{API_PORT}{API_ROOT}/chat/cached/resume/"
 

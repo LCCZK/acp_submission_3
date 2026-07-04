@@ -1,7 +1,6 @@
 import json
 import logging
 from acp_gpt.service.llm_client import call_llm
-from acp_gpt.service.mcp_client import discover_tools, call_mcp_tool
 
 
 logger = logging.getLogger("uvicorn")
